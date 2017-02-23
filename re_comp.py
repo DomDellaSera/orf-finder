@@ -1,3 +1,14 @@
+import pdb
+import sys
+import logging
+
+
+#logging.disable() = True
+logger = logging.getLogger()
+#print("Arguements \n\n", str(sys.argv), "\n\n")
+if "-debug"  in str(sys.argv):
+    logging.basicConfig(level=logging.DEBUG)
+    
 def translation(rna_3_letter_code):
     #input:
         #3 letter dna code
@@ -93,6 +104,7 @@ def reading_frame_translator(dna):
 
 
 def peptide_frame_chooser(DNA_FRAMES):
+    logger.propagate = False
     #input: a list of 6 strings, each a different possible string
     #output: the longest open reading frame(s)
     
@@ -103,39 +115,85 @@ def peptide_frame_chooser(DNA_FRAMES):
     for i in DNA_FRAMES:
         peptide_frames.append(reading_frame_translator(i)) #Translation function called here
         #print(peptide_frames)
-    open_reading_frames= []
-    max_orf_length = 0
+        
+    open_reading_frames= [] #This is the list that will be restarted as the maximum peptide length grows
+    max_orf_length = 0 # This is just to keep track of our largest ORF without having to index
     
     for i in peptide_frames: 
+        # Each split at stop codons, and reiterated to find the largest split
         max_segment_length = 0
         possible_proteins = i.split("*")
         
-        for j in enumerate(possible_proteins):
-            segment_Length = len(j[1])
-            if segment_Length > max_segment_length:
-                max_segment_length = segment_Length
+        for j in possible_proteins:
+            open_reading_frames.append(j)
+    ORFs_Indexed = []
+    def ORF_Indexer(sequence):
+        indexed_orf = (sequence, len(sequence))
+        return(indexed_orf)
+        
+    orf_tmp = []
+    for i in open_reading_frames:
+        #print(ORF_Indexer(i))
+        f = ORF_Indexer(i)
+        orf_tmp.append(f)
+        
+    
+        
+        
+    spagetti= """
+        #This is producing too much spagetti code for something that isn't done recursively
+        
+        for j in enumerate(possible_proteins): #This section finds the largest continuous sequence in each frame
+            # I'm using enumerate to keep track of some sort of index
+            #segment_Length = len(j[1])
+            if len(j) > max_segment_length:
+                #print("Our old segment length is", max_segment_length, "and our new is", len(j))
+                max_segment_length = len(j)
                 max_segment = j
-                #print(j)
+                #print(j, "is our max segment at ", max_segment_length, "residues")
+                
                 
         #print(max_segment_length, max_orf_length)        
-        if max_segment_length > max_orf_length:
-            max_orf_length = max_segment_length
-            open_reading_frames = None
-            open_reading_frames = [] #Erase old ORFs because we found a longer one here
-            #message(max_segment)
-        elif max_segment_length == max_orf_length:
-            #print(open_reading_frames)
-            open_reading_frames.append(max_segment)# There could be two possible ORFs of equal length
+            if max_segment_length > max_orf_length:
+                #If we find a larger continuous stretch we want to nullify our old data
+                max_orf_length = max_segment_length
+                #print("Larger ORF found")
+                open_reading_frames = None
+                open_reading_frames = [] #Erase old ORFs because we found a longer one here
+                
             
-    try:
-        
-        orf = [x[1] for x in open_reading_frames]
-    except:
-        orf = "fuck"
+            #message(max_segment)
+            elif max_segment_length == max_orf_length:
+                #print(open_reading_frames, "There exists an ORF of a similar length")
+                open_reading_frames.append(max_segment)# There could be two possible ORFs of equal length
+                #print(open_reading_frames)
+                if max_segment_length > 40:
+                    pdb.set_trace()
+                """
+            
+    print("Final open reading frames")
+    #print(open_reading_frames)
+    sorted_orf =open_reading_frames.sort
+    #print(open_reading_frames)
     
-    return(orf)
-	
-	
+    handler = logging.StreamHandler()
+    formatter = logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+    logger.setLevel(logging.DEBUG)
+    
+    logging.debug(orf_tmp)
+    #logger.warning(orf_tmp)
+   
+    #for i in open_reading_frames:
+     #   print(i)
+        #print(i[1])
+       
+dna = "TTATAGCGCATGTTAGCGCATGCATGCTATGCGCGATGTGTATAGTGACTGATATACAATGCCATGCATGCAAAATATAGCGCATGTTAGCGCATGCATGCTATGCGCGATGTGTATAGTGACTGATATACAATGCCATGCATGCAAAAATAGCGCATGTTAGCGCATGCATGCTATGCGCGATGTGTATAGTGACTGATATACAATGCCATGCATGCAAAATATAGCGCATGTTAGCGCATGCATGCTATGCGCGATGTGTATAGTGACTGATATACAATGCCATGCATGCAAAA"  
+
+rf = reading_frame_generator(dna)
+peptide_frame_chooser(rf)
+#print(rf)
 	
 	
 	
