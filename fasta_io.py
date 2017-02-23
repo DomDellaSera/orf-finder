@@ -40,7 +40,7 @@ class fasta_sequence(object):
         #self.sequence = ""
         #self.length = len(sequence)
         self.protein = False
-        self.header = header
+        self.header = header.rstrip("\n")
         self.sequence = sequence
         
         
@@ -109,7 +109,9 @@ def basic_fasta_parser(fasta_file):
         #for i in fasta_sequences:
             #logger.debug(i)
             #logger.debug(i.sequence)
-    logger.debug([x.sequence for x in fasta_sequences])
+    return([x for x in fasta_sequences])
+
+#basic_fasta_parser
     
                 
                 
@@ -154,11 +156,17 @@ def main(argv):
             
             
     if debug_mode is False:
-        fasta_file_relative_path = input("Enter the Fasta file name:")
+        inputfile = input("Enter the Fasta file name:")
+        outputfile = "output.fasta"
         
             
-         
-    basic_fasta_parser(inputfile)
+    seq_objs=basic_fasta_parser(inputfile)     
+    formatted_fasta = [">"+x.header+"\n"+x.sequence+"\n\n" for x in seq_objs]
+    with open(outputfile, "a") as out:
+        for i in formatted_fasta:
+            out.write(i)
+    
+    
     #return()
 
 if __name__ == "__main__":
