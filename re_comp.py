@@ -3,11 +3,35 @@ import sys
 import logging
 
 
+
+
+
+
+
+
+
+
+ 	
+def getKey(custom): #For sequence class
+    return custom.length
+
+
+class nonspecifc_Sequence(object): # This will be used to create a tuple later indexed by len(u)
+    def __init__(self, sequence):
+        self.sequence = sequence
+        self.length = len(sequence)
+        self.ORF = False
+        
+    def __repr__(self): # This forces the sequence to be printed, abstracting the attributes
+        return('{}'.format(self.sequence))
+        
+
 #logging.disable() = True
 logger = logging.getLogger()
 #print("Arguements \n\n", str(sys.argv), "\n\n")
 if "-debug"  in str(sys.argv):
     logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
     
 def translation(rna_3_letter_code):
     #input:
@@ -104,7 +128,6 @@ def reading_frame_translator(dna):
 
 
 def peptide_frame_chooser(DNA_FRAMES):
-    logger.propagate = False
     #input: a list of 6 strings, each a different possible string
     #output: the longest open reading frame(s)
     
@@ -117,7 +140,7 @@ def peptide_frame_chooser(DNA_FRAMES):
         #print(peptide_frames)
         
     open_reading_frames= [] #This is the list that will be restarted as the maximum peptide length grows
-    max_orf_length = 0 # This is just to keep track of our largest ORF without having to index
+    #Depreciated as part of spagetti code# max_orf_length = 0 # This is just to keep track of our largest ORF without having to index
     
     for i in peptide_frames: 
         # Each split at stop codons, and reiterated to find the largest split
@@ -127,20 +150,21 @@ def peptide_frame_chooser(DNA_FRAMES):
         for j in possible_proteins:
             open_reading_frames.append(j)
     ORFs_Indexed = []
-    def ORF_Indexer(sequence):
+    
+    def ORF_Indexer(sequence): #I'm depreciating this for a class instead for now
         indexed_orf = (sequence, len(sequence))
         return(indexed_orf)
         
     orf_tmp = []
     for i in open_reading_frames:
         #print(ORF_Indexer(i))
-        f = ORF_Indexer(i)
+        f = nonspecifc_Sequence(i)
         orf_tmp.append(f)
         
     
         
         
-    spagetti= """
+    spagetti_code= """
         #This is producing too much spagetti code for something that isn't done recursively
         
         for j in enumerate(possible_proteins): #This section finds the largest continuous sequence in each frame
@@ -171,23 +195,60 @@ def peptide_frame_chooser(DNA_FRAMES):
                     pdb.set_trace()
                 """
             
-    print("Final open reading frames")
+    #print("Final open reading frames")
     #print(open_reading_frames)
     sorted_orf =open_reading_frames.sort
+    #logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
     #print(open_reading_frames)
+    #handler = logging.StreamHandler()
     
-    handler = logging.StreamHandler()
-    formatter = logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
-    logger.setLevel(logging.DEBUG)
+
+    #logging.basicConfig(format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
+    #logging.debug("1###########################################")
+
+    #handler.setFormatter(formatter)
+    #logging.debug("2###########################################")
+
+    #logger.addHandler(handler)
+    #logger.setLevel(logging.DEBUG)
     
-    logging.debug(orf_tmp)
+    
+    #logging.debug("3###########################################")
+    logging.debug("Final open reading frames:")
+    #logging.debug("Sequences and their respective lengths")
+    logging.debug([x for x in orf_tmp])
+    orfs_List = [x for x in orf_tmp]
+    logging.debug("Sorted By greatest length")
+    logging.debug(sorted(orfs_List, key=getKey, reverse=True))
+    
+    logging.debug("""
+    #############################
+    # Open Reading Frame Finder #
+    #############################
+    """)
+    
+    
+    
+    
+    orfs_Len = sorted(orfs_List, key=getKey, reverse=True)
+    max_orf_length = orfs_Len[0].length #This shouldn't be mutable now
+    logging.debug("Protein Sequence   "+ " "* (max_orf_length-len('Protein Sequence '))+"Length")
+    for i in orfs_Len: #Describing the sequences as ORFs# This is just to create an ORF Table
+        spacer = " "*((3+ max_orf_length)-i.length)
+        logging.debug(i.sequence+spacer+ str(i.length))
+        if i.length == max_orf_length:
+            i.ORF = True
+            #print(i,"\nClass ORF Status: ", i.ORF)
+    logging.debug("\n\nThe Max ORF is %i" % max_orf_length)
+    logging.debug([x for x in orfs_Len if x.ORF is True])
+    #logging.debug([x.length for x in orf_tmp])
     #logger.warning(orf_tmp)
+    #logging.debug()
    
     #for i in open_reading_frames:
      #   print(i)
         #print(i[1])
+        
        
 dna = "TTATAGCGCATGTTAGCGCATGCATGCTATGCGCGATGTGTATAGTGACTGATATACAATGCCATGCATGCAAAATATAGCGCATGTTAGCGCATGCATGCTATGCGCGATGTGTATAGTGACTGATATACAATGCCATGCATGCAAAAATAGCGCATGTTAGCGCATGCATGCTATGCGCGATGTGTATAGTGACTGATATACAATGCCATGCATGCAAAATATAGCGCATGTTAGCGCATGCATGCTATGCGCGATGTGTATAGTGACTGATATACAATGCCATGCATGCAAAA"  
 
