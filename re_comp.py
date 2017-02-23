@@ -75,17 +75,48 @@ def translation(rna_3_letter_code):
     
     return(single_letter_aa)
 	
-def complement(nucleotide):
-    if nucleotide == "A": return("T")
-    elif nucleotide == "T": return("A")
-    elif nucleotide == "G": return("C")
-    elif nucleotide == "C": return("G")
+
     
-def reverse_complement(DNA):
+def reverse_complement(DNA): #HELPER FUNCTION ONLY - don't call this directly
+    #Input:
+            #Single DNA sequence
+    #Output:
+            # Sequence with of biological bonding partners in reverse order
+
+
+    def complement(n): #Not sure if this shoud be its own function but I put it inside reverse_compliment to 
+                       # clarify the flow of function calls
+        u = None
+        if n == "A": u = "T"
+        elif n == "T": u = "A"
+        elif n == "G": u = "C"
+        elif n == "C": u = "G"
+        elif n == "N" : u = n
+        #else: Exc
+        
+        
+        return(u)
+        
+        
     transcribed_rna = ""
+    logging.debug("""
+    ##############################
+    #Reverse Compliment Debugging#
+    ##############################
+    """)
+    logging.debug("input: "+DNA[0])
+    
+    
     for i in DNA:
-        transcribed_rna += complement(i)
-    return(transcribed_rna[::-1])
+        try:
+            transcribed_rna += complement(i)
+        except:
+            print(i)
+    return(transcribed_rna[::-1])#This [::-1] alone is doing the reversal here-
+                                    #Useful for strings
+logging.debug('output: '+ reverse_complement("T"))
+                                   
+
 
 def reading_frame_generator(sequence):
     # Calls Reverse complement, builds list data structure of length two and in each adds 3 strings, each at a different
@@ -93,7 +124,7 @@ def reading_frame_generator(sequence):
     #input:
         #DNA sequence
     #output:
-        # 6 DNA sequences, 3 for the sequence and 3 for the reverse compliment
+        # 6 DNA sequences, 3 for the sequence and 3 for the reverse complement
         
     sequence_rc = reverse_complement(sequence)
 	
@@ -106,7 +137,7 @@ def reading_frame_generator(sequence):
         HexRF.append(i[2:])
     return(HexRF)
 
-def reading_frame_translator(dna):
+def reading_frame_translator(dna): #HELPER FUNCTION FOR reading_frame_generator
 
     #input:
         #linear DNA sequence
@@ -128,6 +159,8 @@ def reading_frame_translator(dna):
 
 
 def peptide_frame_chooser(DNA_FRAMES):
+    logging.debug("peptide_frame_chooser function input: ")
+    logging.debug(DNA_FRAMES)
     #input: a list of 6 strings, each a different possible string
     #output: the longest open reading frame(s)
     
@@ -240,7 +273,7 @@ def peptide_frame_chooser(DNA_FRAMES):
             i.ORF = True
             #print(i,"\nClass ORF Status: ", i.ORF)
     logging.debug("\n\nThe Max ORF is %i" % max_orf_length)
-    logging.debug([x for x in orfs_Len if x.ORF is True])
+    #logging.debug([x for x in orfs_Len if x.ORF is True])
     #logging.debug([x.length for x in orf_tmp])
     #logger.warning(orf_tmp)
     #logging.debug()
@@ -248,12 +281,15 @@ def peptide_frame_chooser(DNA_FRAMES):
     #for i in open_reading_frames:
      #   print(i)
         #print(i[1])
-        
+    return([x for x in orfs_Len if x.ORF is True])
        
 dna = "TTATAGCGCATGTTAGCGCATGCATGCTATGCGCGATGTGTATAGTGACTGATATACAATGCCATGCATGCAAAATATAGCGCATGTTAGCGCATGCATGCTATGCGCGATGTGTATAGTGACTGATATACAATGCCATGCATGCAAAAATAGCGCATGTTAGCGCATGCATGCTATGCGCGATGTGTATAGTGACTGATATACAATGCCATGCATGCAAAATATAGCGCATGTTAGCGCATGCATGCTATGCGCGATGTGTATAGTGACTGATATACAATGCCATGCATGCAAAA"  
 
 rf = reading_frame_generator(dna)
-peptide_frame_chooser(rf)
+returned_obj = peptide_frame_chooser(rf)
+logging.debug("Variable stored in assigned returner: ")
+logging.debug(returned_obj)
+
 #print(rf)
 	
 	
