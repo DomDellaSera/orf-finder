@@ -58,22 +58,46 @@ def translation(rna_3_letter_code):
     singleletter = {
 		'Cys': 'C', 'Asp': 'D', 'Ser': 'S', 'Gln': 'Q', 'Lys': 'K', 'Trp': 'W', 'Asn': 'N', 'Pro': 'P',
         'Thr': 'T', 'Phe': 'F', 'Ala': 'A', 'Gly': 'G', 'Ile': 'I', 'Leu': 'L', 'His': 'H', 'Arg': 'R',
-        'Met': 'M', 'Val': 'V', 'Glu': 'E', 'Tyr': 'Y', '---': '*'	
+        'Met': 'M', 'Val': 'V', 'Glu': 'E', 'Tyr': 'Y', '---': '*', "NNN" : 'X'
 	}
+    def codon_error_tolerator(tetracodon):
+        inferred_amino_acid = {
+            "UUN" : "NNN",
+            "CUN" : "Leu",
+            "GUN" : "Val",
+            "AUN" : "NNN",
+            "UCN" : "Ser",
+            "CCN" : "Pro",
+            "ACN" : "Thr",
+            "GCN" : "Ala",
+            "UAN" : "NNN",
+            "CAN" : "NNN",
+            "AAN" : "NNN",
+            "GAN" : "NNN",
+            "UGN" : "NNN",
+            "CGN" : "Arg",
+            "AGN" : "NNN", 
+            "GGN" : "Gly"}
+        if tetracodon[2] is "N" and tetracodon.count("N") == 1:
+            correction = inferred_amino_acid[tetracodon]
+            return(correction)
+        elif "N" in tetracodon:
+            return("NNN")
+        else: return(tetracodon)
 	
+    
     rna_nuc = ""
-    for i in rna_3_letter_code:
+    for i in rna_3_letter_code:# We can't work with T
         
         if i is "T": rna_nuc += "U"
         else: rna_nuc += i
+    if "N" in rna_nuc:
+        aa = codon_error_tolerator(rna_nuc)
+    elif "N" not in rna_nuc:
+        aa = RNA_codon_table[rna_nuc]
+            
     
-    
-    
-    single_letter_aa = singleletter[\
-		RNA_codon_table[rna_nuc]\
-		]
-    
-    return(single_letter_aa)
+    return(singleletter[aa])
 	
 
     
@@ -104,7 +128,7 @@ def reverse_complement(DNA): #HELPER FUNCTION ONLY - don't call this directly
     #Reverse Compliment Debugging#
     ##############################
     """)
-    logging.debug("input: "+DNA[0])
+    #logging.debug("input: "+DNA[0])
     
     
     for i in DNA:
@@ -193,6 +217,8 @@ def peptide_frame_chooser(DNA_FRAMES):
         #print(ORF_Indexer(i))
         f = nonspecifc_Sequence(i)
         orf_tmp.append(f)
+    print("orf_tmp is a",type(orf_tmp))
+    print("orf_tmp[0] is a", type(orf_tmp[0]))
         
     
         
@@ -249,10 +275,15 @@ def peptide_frame_chooser(DNA_FRAMES):
     #logging.debug("3###########################################")
     logging.debug("Final open reading frames:")
     #logging.debug("Sequences and their respective lengths")
-    logging.debug([x for x in orf_tmp])
-    orfs_List = [x for x in orf_tmp]
+    #logging.debug([x for x in orf_tmp])
+    
+    
+    
+    
+    #print("orf_List is a",type(orf_List))
+    #print("orf_tmp[0] is a", type(orf_tmp[0]))
     logging.debug("Sorted By greatest length")
-    logging.debug(sorted(orfs_List, key=getKey, reverse=True))
+    logging.debug(sorted(orf_tmp, key=getKey, reverse=True))
     
     logging.debug("""
     #############################
@@ -263,7 +294,7 @@ def peptide_frame_chooser(DNA_FRAMES):
     
     
     
-    orfs_Len = sorted(orfs_List, key=getKey, reverse=True)
+    orfs_Len = sorted(orf_tmp, key=getKey, reverse=True)
     max_orf_length = orfs_Len[0].length #This shouldn't be mutable now
     logging.debug("Protein Sequence   "+ " "* (max_orf_length-len('Protein Sequence '))+"Length")
     for i in orfs_Len: #Describing the sequences as ORFs# This is just to create an ORF Table
@@ -281,7 +312,7 @@ def peptide_frame_chooser(DNA_FRAMES):
     #for i in open_reading_frames:
      #   print(i)
         #print(i[1])
-    return([x for x in orfs_Len if x.ORF is True])
+    return([x.sequence for x in orfs_Len if x.ORF is True])
        
 dna = "TTATAGCGCATGTTAGCGCATGCATGCTATGCGCGATGTGTATAGTGACTGATATACAATGCCATGCATGCAAAATATAGCGCATGTTAGCGCATGCATGCTATGCGCGATGTGTATAGTGACTGATATACAATGCCATGCATGCAAAAATAGCGCATGTTAGCGCATGCATGCTATGCGCGATGTGTATAGTGACTGATATACAATGCCATGCATGCAAAATATAGCGCATGTTAGCGCATGCATGCTATGCGCGATGTGTATAGTGACTGATATACAATGCCATGCATGCAAAA"  
 

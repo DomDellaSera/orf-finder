@@ -5,6 +5,7 @@ import logging
 import sys
 import sys, getopt
 import os
+from re_comp import *
 
 
 
@@ -39,7 +40,7 @@ class fasta_sequence(object):
     def __init__(self, header, sequence = ""):
         #self.sequence = ""
         #self.length = len(sequence)
-        self.protein = False
+        #self.protein = False
         self.header = header.rstrip("\n")
         self.sequence = sequence
         
@@ -56,7 +57,6 @@ def basic_fasta_parser(fasta_file):
     fasta_sequences = []
     with open(fasta_file) as f:
         fasta_lines = f.readlines()
-        
         fasta_size = file_size(fasta_file)
         
         
@@ -160,7 +160,18 @@ def main(argv):
         outputfile = "output.fasta"
         
             
-    seq_objs=basic_fasta_parser(inputfile)     
+    seq_objs=basic_fasta_parser(inputfile) #Now we have our sequences from this file but they haven't been converted    
+    #THis is outputting my class object
+    
+    #dna_reading_frames =
+    for seq_obj in seq_objs:
+        reading_frames=reading_frame_generator(seq_obj.sequence)
+        final_orfs = peptide_frame_chooser(reading_frames)
+        seq_obj.sequence = final_orfs[0]
+        
+        logger.debug(final_orfs)
+    for i in final_orfs:
+        print(type(i))
     formatted_fasta = [">"+x.header+"\n"+x.sequence+"\n\n" for x in seq_objs]
     with open(outputfile, "a") as out:
         for i in formatted_fasta:
