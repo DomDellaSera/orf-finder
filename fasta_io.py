@@ -8,7 +8,7 @@ import os
 from re_comp import *
 
 
-
+#C:\Users\DDell\Documents\Programming\Python\ORF_Finder\test_fasta
 
 logger = logging.getLogger()
 def convert_bytes(num):
@@ -34,7 +34,8 @@ def file_size(file_path):
         return((convert_bytes(file_info.st_size)))
     
     else:
-        raise Exception("File not found")
+        pass
+        #raise Exception("File not found")
         
 class fasta_sequence(object): 
     def __init__(self, header, sequence = ""):
@@ -53,14 +54,14 @@ def basic_fasta_parser(fasta_file):
     
 
     logging.debug(fasta_file)
-    print(file_size(fasta_file))
+    logging.debug(file_size(fasta_file))
     fasta_sequences = []
     with open(fasta_file) as f:
         fasta_lines = f.readlines()
         fasta_size = file_size(fasta_file)
         
         
-        logging.debug(
+        logging.info(
         """
     
                 ##############
@@ -158,20 +159,27 @@ def main(argv):
     if debug_mode is False:
         inputfile = input("Enter the Fasta file name:")
         outputfile = "output.fasta"
+    logging.info(os.name)
+    if os.name == "nt":
+        #Windows doesn't do relative paths
+        script_dir = os.path.dirname(__file__)
+        rel_path = inputfile
+        inputfile = os.path.join(script_dir,rel_path)
         
             
     seq_objs=basic_fasta_parser(inputfile) #Now we have our sequences from this file but they haven't been converted    
     #THis is outputting my class object
     
     #dna_reading_frames =
+    
     for seq_obj in seq_objs:
         reading_frames=reading_frame_generator(seq_obj.sequence)
         final_orfs = peptide_frame_chooser(reading_frames)
         seq_obj.sequence = final_orfs[0]
         
         logger.debug(final_orfs)
-    for i in final_orfs:
-        print(type(i))
+
+
     formatted_fasta = [">"+x.header+"\n"+x.sequence+"\n\n" for x in seq_objs]
     with open(outputfile, "a") as out:
         for i in formatted_fasta:

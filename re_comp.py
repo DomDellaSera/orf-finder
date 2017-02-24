@@ -217,8 +217,8 @@ def peptide_frame_chooser(DNA_FRAMES):
         #print(ORF_Indexer(i))
         f = nonspecifc_Sequence(i)
         orf_tmp.append(f)
-    print("orf_tmp is a",type(orf_tmp))
-    print("orf_tmp[0] is a", type(orf_tmp[0]))
+    #print("orf_tmp is a",type(orf_tmp))
+    #print("orf_tmp[0] is a", type(orf_tmp[0]))
         
     
         
@@ -296,15 +296,16 @@ def peptide_frame_chooser(DNA_FRAMES):
     
     orfs_Len = sorted(orf_tmp, key=getKey, reverse=True)
     max_orf_length = orfs_Len[0].length #This shouldn't be mutable now
-    logging.debug("Protein Sequence   "+ " "* (max_orf_length-len('Protein Sequence '))+"Length")
-    for i in orfs_Len: #Describing the sequences as ORFs# This is just to create an ORF Table
+    logging.info("Protein Sequence   "+ " "* (max_orf_length-len('Protein Sequence '))+"Length")
+    for i in orfs_Len[:6]: #Describing the sequences as ORFs# This is just to create an ORF Table
         spacer = " "*((3+ max_orf_length)-i.length)
-        logging.debug(i.sequence+spacer+ str(i.length))
+        logging.info('Top 5 Open Reading Frames')
+        logging.info(i.sequence+spacer+ str(i.length))
         if i.length == max_orf_length:
             i.ORF = True
             #print(i,"\nClass ORF Status: ", i.ORF)
-    logging.debug("\n\nThe Max ORF is %i" % max_orf_length)
-    #logging.debug([x for x in orfs_Len if x.ORF is True])
+    logging.info("\n\nThe Max ORF is %i" % max_orf_length)
+    logging.info([x for x in orfs_Len if x.ORF is True])
     #logging.debug([x.length for x in orf_tmp])
     #logger.warning(orf_tmp)
     #logging.debug()
