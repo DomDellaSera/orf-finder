@@ -1,6 +1,10 @@
 import sys
 import os
 import unittest
+
+
+print("Formal functional test not currently implemented, try running testrun.py")
+#os.system("cd ..")
 from re_comp import *
 from fasta_io import * #THIS IS BAD FORM
 
@@ -17,7 +21,7 @@ class bash_Command(object):
 
 class number_of_seq_io_equivalantTestCase(unittest.TestCase):
     def setUp(self):
-        bash_Command = 'python fasta_io.py -i "test_fasta/brugia_malayi_reviewed.fasta" -o "test_fasta/test_output.fasta" --debug' 
+        self.bash_Command = 'python fasta_io.py -i "test_fasta/random_seqs_dna.fasta" -o "test_fasta/test_output.fasta" --debug' 
         os.system(bash_Command)
 
 
@@ -31,7 +35,7 @@ class number_of_seq_io_equivalantTestCase(unittest.TestCase):
         assertEqual(os.system(bash_Command[0]), os.system(bash_Command[1]))
 
 
-#if __name__ == '__main__':
- #   unittest.main(warnings='ignore')
+if __name__ == '__main__':
+    unittest.main(warnings='ignore')
 #os.system(bashCommand)
 

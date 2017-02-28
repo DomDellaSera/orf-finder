@@ -3,16 +3,21 @@ from fasta_io import *
 import logging
 import os
 
-inputfile = "test_fasta/random_seqs_dna.fasta"
-outputfile = "testrun_output_ORFs.txt"
 
+
+
+
+inputfile = "test_fasta/random_seqs_dna.fasta"
+outputfile = "testrun_output_ORFs.out"
+    
+    
 if os.name == "nt": #Windows doesn't do relative paths
     script_dir = os.path.dirname(__file__)
     rel_path = inputfile
     inputfile = os.path.join(script_dir,rel_path)
 
 logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.INFO) # This generates nice tables
 #logging.basicConfig(level=logging.INFO)
 
 

@@ -1,9 +1,12 @@
 import unittest
+
+
 #rom re_comp import translation, reverse_complement,reading_frame_generator, reading_frame_translator,peptide_frame_chooser
 from re_comp import *
 class translationTestCase(unittest.TestCase):
     
     def test_AUG_start(self):
+        
         self.assertTrue(translation("AUG") == "M")
             
     def test_Stop_codon(self):
@@ -15,17 +18,58 @@ class translationTestCase(unittest.TestCase):
     def test_UUA_and_CUU_Return_Leu(self):
         self.assertEqual(translation("UUA"), translation('CUU'))
         
-    def test_N_toleration(self):
-        self.assertEqual(translation("GGN"), "G")
+
         
-    def test_N_intoleration(self):
+    def test_XNX_intoleration(self):
         self.assertEqual(translation("GNG"), "X")
-    def test_N_intoleration(self):
-        self.assertEqual(translation("CAN"), "X")
-    def test_N_intoleration(self):
-        self.assertEqual(translation("UUN"), "X")
-    def test_N_intoleration(self):
-        self.assertEqual(translation("NNN"), "X")
+
+
+    def test_XXN_toleration_and_intoleration_itearively(self):
+    
+        
+        Redundant_Translation_Mappings = {
+            "CUN" : "Leu",
+            "GUN" : "Val",
+            "UCN" : "Ser",
+            "CCN" : "Pro",
+            "ACN" : "Thr",
+            "GCN" : "Ala",
+            "CGN" : "Arg",
+            "GGN" : "Gly"}
+        singleletter = {'Cys': 'C', 'Asp': 'D', 'Ser': 'S', 'Gln': 'Q', 'Lys': 'K', 'Trp': 'W', 'Asn': 'N', 'Pro': 'P','Thr': 'T', 'Phe': 'F', 'Ala': 'A', 'Gly': 'G', 'Ile': 'I', 'Leu': 'L', 'His': 'H', 'Arg': 'R','Met': 'M', 'Val': 'V', 'Glu': 'E', 'Tyr': 'Y', '---': '*', "NNN" : 'X'}
+        NonRedundant_Amino_Acids = {
+            "UUN" : "NNN",
+            "AUN" : "NNN",
+            "UAN" : "NNN",
+            "CAN" : "NNN",
+            "AAN" : "NNN",
+            "GAN" : "NNN",
+            "UGN" : "NNN",
+            "AGN" : "NNN"}
+      
+        Redundant_tri_letter_AAs = {x for x in Redundant_Translation_Mappings.values()}
+        Redundant_single_letter_AAs = {singleletter[x] for x in Redundant_tri_letter_AAs}
+        print("\n\n\nAmino Acids which allow for redundancy: ")
+        
+        print(Redundant_single_letter_AAs)
+        print("Testing tolerance for N at the third position of codons")
+
+        
+        for tri_Nucleotide in Redundant_Translation_Mappings:
+            test_amino = translation(tri_Nucleotide)
+            self.assertNotEqual(test_amino, 'X')
+            print('Testing:',tri_Nucleotide,'==',test_amino)
+            self.assertIn(test_amino, Redundant_single_letter_AAs)
+
+
+    
+        
+        for tri_Nucleotide in NonRedundant_Amino_Acids:
+            print('Testing: ',tri_Nucleotide, "== X" )
+            self.assertEqual(translation(tri_Nucleotide), 'X')
+        
+
+        
 
         
         
@@ -97,14 +141,15 @@ class peptide_frame_chooserTestCase(unittest.TestCase):
         #
         #This (the function) returns a list of nonspecific_Sequence objects
         #
-        output= output[0].sequence #This gets us the string - adding classes broke this test
+         #This gets us the string - adding classes broke this test
         #print(output)
         #output = output.sequence
         #print(type(output[0]))
-        self.assertEqual("ACDA", output)
+        self.assertEqual(["ACDA"], output)
+
         
         
         
         
 if __name__ == '__main__':
-    unittest.main()
+    unittest.main(verbosity=2)

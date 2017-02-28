@@ -1,4 +1,4 @@
-#!/usr/bin/python3.5
+
 
 #Input/output functions
 import logging
@@ -39,9 +39,7 @@ def file_size(file_path):
         
 class fasta_sequence(object): 
     def __init__(self, header, sequence = ""):
-        #self.sequence = ""
-        #self.length = len(sequence)
-        #self.protein = False
+
         self.header = header.rstrip("\n")
         self.sequence = sequence
         
@@ -50,16 +48,17 @@ class fasta_sequence(object):
         return('{}'.format(self.header)) 
     
 def basic_fasta_parser(fasta_file):
+    #Input: fasta
     
     
 
     logging.debug(fasta_file)
-    logging.debug(file_size(fasta_file))
+    logging.info(file_size(fasta_file))
     fasta_sequences = []
+    
     with open(fasta_file) as f:
         fasta_lines = f.readlines()
         fasta_size = file_size(fasta_file)
-        
         
         logging.info(
         """
@@ -73,20 +72,16 @@ def basic_fasta_parser(fasta_file):
                 Size:  %s
                 """ % (fasta_file,
                 len(fasta_lines),
-                fasta_size)
-                )
-        #print(fasta_lines)
-        seq_data = False
-        
-        header = None
+                fasta_size))
         
         
+        header = None # This will prevent appending 
+        #
+        #Fasta Generator - Should be a function
+        # 
         for i in fasta_lines:
-            #logger.debug(i)
-            
             if i.startswith(">"):
-            
-                if header is not None:#Append PREVIOUS fasta_sequence to list so we can reinitialize
+                if header is not None: 
                     logger.debug(fasta_sequence_tmp)
                     fasta_sequences.append(fasta_sequence_tmp)
                     
@@ -102,17 +97,10 @@ def basic_fasta_parser(fasta_file):
                 stripped = i.rstrip("\n")
                 fasta_sequence_tmp.sequence += stripped
         
-        #fasta_sequences.append(fasta_sequence_tmp) #Add the last sequence
-        #if fasta_sequences == 0:
-        #    raise Exception("Something Went Wrong")
-        logger.debug("Final Fasta Sequence")
-        #logger.debug("Length of final fasta list" +len(fasta_sequences))
-        #for i in fasta_sequences:
-            #logger.debug(i)
-            #logger.debug(i.sequence)
+      
     return([x for x in fasta_sequences])
 
-#basic_fasta_parser
+
     
                 
                 
@@ -126,72 +114,6 @@ def basic_fasta_parser(fasta_file):
 
 
 
-
-
-def main(argv):
-    # Function for command line arguements
-    debug_mode = False
-
-
-    inputfile = ''
-    outputfile = ''
-    #try:
-    opts, args = getopt.getopt(argv,"dhi:o:",["ifile=","ofile=","debug"])
-    #except getopt.GetoptError:
-     #   print('fasta_io.py -i <inputfile> -o <outputfile> [-debug]')
-     #   sys.exit(2)
-        
-    for opt, arg in opts:
-        if opt == '-h':
-            print('test.py -i <inputfile> -o <outputfile>')
-            sys.exit()
-        elif opt in ("-i", "--ifile"):
-            inputfile = arg
-        elif opt in ("-o", "--ofile"):
-            outputfile = arg
-        elif opt == ("--debug"):
-            logging.basicConfig(level=logging.DEBUG)
-            
-            debug_mode = True
-            
-            
-            
-    if debug_mode is False:
-        inputfile = input("Enter the Fasta file name:")
-        outputfile = "output.fasta"
-    logging.info(os.name)
-    if os.name == "nt":
-        #Windows doesn't do relative paths
-        script_dir = os.path.dirname(__file__)
-        rel_path = inputfile
-        inputfile = os.path.join(script_dir,rel_path)
-        
-            
-    seq_objs=basic_fasta_parser(inputfile) #Now we have our sequences from this file but they haven't been converted    
-    #THis is outputting my class object
-    
-    #dna_reading_frames =
-    
-    for seq_obj in seq_objs:
-        reading_frames=reading_frame_generator(seq_obj.sequence)
-        final_orfs = peptide_frame_chooser(reading_frames)
-        seq_obj.sequence = final_orfs[0]
-        
-        logger.debug(final_orfs)
-
-
-    formatted_fasta = [">"+x.header+"\n"+x.sequence+"\n\n" for x in seq_objs]
-    with open(outputfile, "a") as out:
-        for i in formatted_fasta:
-            out.write(i)
-    
-    
-    #return()
-
-if __name__ == "__main__":
-   main(sys.argv[1:])
-   
-   
 
     
 
