@@ -1,12 +1,9 @@
 
 
 #Input/output functions
-import logging
-import sys
-import sys, getopt
 import os
-from re_comp import *
 
+from re_comp import *
 
 #C:\Users\DDell\Documents\Programming\Python\ORF_Finder\test_fasta
 
@@ -38,8 +35,11 @@ def file_size(file_path):
         #raise Exception("File not found")
         
 class fasta_sequence(object): 
+    """
+    Formatting for Fasta Sequences
+    """
+    
     def __init__(self, header, sequence = ""):
-
         self.header = header.rstrip("\n")
         self.sequence = sequence
         
@@ -49,6 +49,7 @@ class fasta_sequence(object):
     
 def basic_fasta_parser(fasta_file):
     #Input: fasta
+    #Output: A list of sequences
     
     
 

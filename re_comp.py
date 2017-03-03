@@ -29,9 +29,8 @@ class nonspecifc_Sequence(object): # This will be used to create a tuple later i
 #logging.disable() = True
 logger = logging.getLogger()
 #print("Arguements \n\n", str(sys.argv), "\n\n")
-if "-debug"  in str(sys.argv):
-    logging.basicConfig(level=logging.DEBUG)
-    logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
+
+    
     
 def translation(rna_3_letter_code):
     #input:
@@ -250,12 +249,12 @@ def peptide_frame_chooser(DNA_FRAMES):
 
     return([x.sequence for x in orfs_Len if x.ORF is True])
        
-dna = "TTATAGCGCATGTTAGCGCATGCATGCTATGCGCGATGTGTATAGTGACTGATATACAATGCCATGCATGCAAAATATAGCGCATGTTAGCGCATGCATGCTATGCGCGATGTGTATAGTGACTGATATACAATGCCATGCATGCAAAAATAGCGCATGTTAGCGCATGCATGCTATGCGCGATGTGTATAGTGACTGATATACAATGCCATGCATGCAAAATATAGCGCATGTTAGCGCATGCATGCTATGCGCGATGTGTATAGTGACTGATATACAATGCCATGCATGCAAAA"  
+#dna = "TTATAGCGCATGTTAGCGCATGCATGCTATGCGCGATGTGTATAGTGACTGATATACAATGCCATGCATGCAAAATATAGCGCATGTTAGCGCATGCATGCTATGCGCGATGTGTATAGTGACTGATATACAATGCCATGCATGCAAAAATAGCGCATGTTAGCGCATGCATGCTATGCGCGATGTGTATAGTGACTGATATACAATGCCATGCATGCAAAATATAGCGCATGTTAGCGCATGCATGCTATGCGCGATGTGTATAGTGACTGATATACAATGCCATGCATGCAAAA"  
 
-rf = reading_frame_generator(dna)
-returned_obj = peptide_frame_chooser(rf)
+#rf = reading_frame_generator(dna)
+#returned_obj = peptide_frame_chooser(rf)
 logging.debug("Variable stored in assigned returner: ")
-logging.debug(returned_obj)
+#logging.debug(returned_obj)
 
 #print(rf)
 	
